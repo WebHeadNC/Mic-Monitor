@@ -388,8 +388,12 @@ def mic_check_loop():
     if PYCAW_AVAILABLE:
         try:
             comtypes.CoInitialize()
-        except Exception as e:
-            log_activity(f"COM initialization failed: {e}")
+        except OSError as e:
+            # RPC_E_CHANGED_MODE (-2147417850): COM is already initialized on
+            # this thread in a different apartment mode. Harmless — the audio
+            # APIs work regardless, so only log genuinely unexpected errors.
+            if getattr(e, "winerror", None) != -2147417850:
+                log_activity(f"COM initialization warning: {e}")
 
     log_activity(f"Microphone monitoring started (method: {CONFIG.get('detection_method')})")
 
