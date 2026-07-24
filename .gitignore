@@ -1,0 +1,12 @@
+# Python build/runtime artifacts
+__pycache__/
+*.py[cod]
+
+# App runtime files (generated next to the script/exe)
+mic_monitor_config.json
+mic_monitor.log
+
+# PyInstaller build output
+build/
+dist/
+*.spec
