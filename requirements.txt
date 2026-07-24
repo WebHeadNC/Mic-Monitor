@@ -1,0 +1,5 @@
+pywinauto
+pystray
+Pillow
+requests
+pycaw

@@ -14,3 +14,29 @@ It has a menu that allows you to configure the webhook.
 You can view the log if needed for troubleshooting. ![image](https://github.com/user-attachments/assets/6062c6b7-cb4a-4e1e-a05d-669524fab625)
 
 Or you can exit the program.
+
+## Mic Detection Method
+
+The app can detect microphone use in two ways, selectable from the **Webhook Editor** menu:
+
+- **Audio Session (recommended)** — reads the actual capture state from Windows Core Audio (WASAPI) via `pycaw`. This checks whether any application is really recording, so it isn't affected by taskbar rendering or UI lag.
+- **Taskbar Icon** — the original method, which looks for the microphone icon in the taskbar using UI Automation. Kept as a fallback.
+
+If `pycaw` isn't installed, the app automatically falls back to the Taskbar Icon method.
+
+## Configuration
+
+Settings (both webhook URLs/methods and the chosen detection method) are saved to `mic_monitor_config.json`, created next to the script/executable. Your changes persist across restarts.
+
+> Note: the config and log files are written to the app's own folder, so run it from a user-writable location (not `C:\Program Files`) to avoid Windows blocking the writes.
+
+## Running from source
+
+Install the dependencies and run the script:
+
+```
+pip install -r requirements.txt
+python mic-monitor.py
+```
+
+Dependencies: `pywinauto`, `pystray`, `Pillow`, `requests`, and `pycaw` (for the Audio Session detection method).
