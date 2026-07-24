@@ -55,8 +55,15 @@ exit_event = threading.Event()
 LOG_FILE = os.path.join(os.path.dirname(sys.argv[0]), 'mic_monitor.log')
 LOG_LOCK = threading.Lock()
 
-# Icon file, shipped alongside the script/exe
-ICON_FILE = os.path.join(os.path.dirname(sys.argv[0]), 'headset2.ico')
+def resource_path(relative):
+    """Resolve a bundled read-only resource. Works both from source and when
+    frozen by PyInstaller: files added via --add-data are extracted to
+    sys._MEIPASS at runtime, so the icon lives inside the exe."""
+    base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(sys.argv[0])))
+    return os.path.join(base, relative)
+
+# Icon file — bundled inside the exe (PyInstaller --add-data), or alongside the script
+ICON_FILE = resource_path('headset2.ico')
 
 # Persisted configuration file, stored alongside the script/exe
 CONFIG_FILE = os.path.join(os.path.dirname(sys.argv[0]), 'mic_monitor_config.json')
@@ -377,6 +384,7 @@ def setup_tray_icon():
         MenuItem('Quit', quit_action)
     )
     icon = Icon("test", create_image(), menu=menu)
+    log_activity("Tray icon loaded")
     icon.run()
 
 def mic_check_loop():
