@@ -19,7 +19,9 @@ It has a menu that allows you to configure the webhook and choose how the mic is
 
 ![Webhook Configuration window](docs/webhook-config-v4.png)
 
-You can view the log if needed for troubleshooting. ![image](https://github.com/user-attachments/assets/6062c6b7-cb4a-4e1e-a05d-669524fab625)
+You can view the log if needed for troubleshooting.
+
+![Mic Monitor Log window](docs/log-window-v4.png)
 
 Or you can exit the program.
 

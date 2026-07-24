@@ -228,22 +228,27 @@ def view_log_file():
     log_window = tk.Tk()
     log_window.title("Mic Monitor Log")
     log_window.geometry("600x400")
-    
+
     # Set the window icon to match the system tray icon
     log_window.iconbitmap(ICON_FILE)
 
     # Make the window resizable
     log_window.resizable(True, True)
 
-    # Configure grid layout to make the text area expandable
-    log_window.grid_rowconfigure(0, weight=1)
-    log_window.grid_columnconfigure(0, weight=1)
-
-    # Create a scrolled text widget with dynamic wrapping
-    log_text = scrolledtext.ScrolledText(log_window, 
-                                         wrap=tk.WORD,  # Wrap by word
-                                         borderwidth=10)
-    log_text.grid(row=0, column=0, sticky='nsew')  # Expand in all directions
+    # ScrolledText already includes its own scrollbar, so no separate one is
+    # needed. A flat border with a little internal padding keeps it clean.
+    log_text = scrolledtext.ScrolledText(
+        log_window,
+        wrap=tk.WORD,              # Wrap by word
+        font=("Consolas", 10),     # Monospace for readable, aligned log lines
+        relief=tk.FLAT,
+        borderwidth=0,
+        padx=10,
+        pady=10,
+        background="white",
+        foreground="#1f1f1f",
+    )
+    log_text.pack(fill=tk.BOTH, expand=True)
 
     # Read and display log contents
     try:
@@ -254,11 +259,6 @@ def view_log_file():
 
     # Make the text read-only
     log_text.config(state=tk.DISABLED)
-
-    # Add a scrollbar with a nice visual style
-    scrollbar = ttk.Scrollbar(log_window, orient=tk.VERTICAL, command=log_text.yview)
-    scrollbar.grid(row=0, column=1, sticky='ns')
-    log_text.configure(yscrollcommand=scrollbar.set)
 
     # Scroll to the bottom by default to show latest entries
     log_text.see(tk.END)
