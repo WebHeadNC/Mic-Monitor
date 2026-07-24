@@ -1,17 +1,23 @@
 # Mic Monitor
-Python script that sends a webhook when your mic is in use.
+Simple executable file that sends a webhook when your mic is in use.
 
 I built this because I have a light connected to a smart outlet outside my home office, which I turn on when I'm in a call or online meeting so people know not to interrupt me. The problem was I kept forgetting to turn it on. I looked for an existing tool to automate this and came up empty, so I wrote my own.
 
 It's a Python script packaged into a standalone executable with PyInstaller. When it detects the microphone is active, it fires a webhook to turn on the smart outlet. In my setup, that webhook goes to Bitfocus Companion, which controls a TP-Link Kasa outlet.
 
+## Download
+
+**[Download Mic_Monitor_v4.exe](https://github.com/WebHeadNC/Mic-Monitor/raw/main/Mic_Monitor_v4.exe)**
+
+The repository also includes the original Python source (`mic-monitor.py`) in case you want to make changes, but you don't need it to run the app — everything is contained in the single self-contained exe (the icon is embedded, no other files required).
+
 The app runs in the taskbar 
 
 ![image](https://github.com/user-attachments/assets/1d9a4771-d7fd-4645-98f0-606ac324abc7) ![image](https://github.com/user-attachments/assets/c6f5a9da-b043-4bed-b279-51903dfe4026)
 
-It has a menu that allows you to configure the webhook. 
+It has a menu that allows you to configure the webhook and choose how the mic is detected.
 
-![image](https://github.com/user-attachments/assets/a876afa2-cfcb-441d-b80b-4c3b7d3b8e2d)
+![Webhook Configuration window](docs/webhook-config-v4.png)
 
 You can view the log if needed for troubleshooting. ![image](https://github.com/user-attachments/assets/6062c6b7-cb4a-4e1e-a05d-669524fab625)
 
