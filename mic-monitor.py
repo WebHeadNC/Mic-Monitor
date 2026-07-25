@@ -29,6 +29,9 @@ EDATAFLOW_ECAPTURE = 1          # capture (recording) endpoints
 DEVICE_STATE_ACTIVE = 0x1       # only enabled/plugged-in endpoints
 AUDIO_SESSION_STATE_ACTIVE = 1  # AudioSessionStateActive
 
+# Application version
+__version__ = "4.0.1"
+
 # Detection method identifiers
 METHOD_AUDIO_SESSION = "audio_session"
 METHOD_TASKBAR_ICON = "taskbar_icon"
