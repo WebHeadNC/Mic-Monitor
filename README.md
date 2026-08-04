@@ -1,38 +1,60 @@
-# Mic Monitor
-Simple executable file that sends a webhook when your mic is in use.
+<img src="docs/hero-banner.png" width="100%" alt="Mic Monitor — turns on a light when your mic goes live">
 
-I built this because I have a light connected to a smart outlet outside my home office, which I turn on when I'm in a call or online meeting so people know not to interrupt me. The problem was I kept forgetting to turn it on. I looked for an existing tool to automate this and came up empty, so I wrote my own.
+Trigger a "do not disturb" light for your home office automatically, no button press required.
 
-It's a Python script packaged into a standalone executable with PyInstaller. When it detects the microphone is active, it fires a webhook to turn on the smart outlet. In my setup, that webhook goes to Bitfocus Companion, which controls a TP-Link Kasa outlet.
+I have a light plugged into a smart outlet outside my office door, which I use to signal that I'm in a call or meeting. The problem: I kept forgetting to turn it on. I looked for an existing tool that could do this automatically and couldn't find one, so I built Mic Monitor and have since enhanced it with help from AI.
+
+The tool is a Python script packaged as a standalone executable (via PyInstaller). It watches for microphone activity and fires a webhook the moment your mic goes live. You can use this with a smart outlet to turn on a light automatically or trigger any automation you like via Bitfocus Companion or Home Assistant. In my setup, the webhook hits Bitfocus Companion, which in turn controls a TP-Link Kasa smart outlet — but since it's just a webhook, it can be pointed at any service that accepts a webhook.
 
 ## Download
 
-**[Download Mic_Monitor_v4.exe](https://github.com/WebHeadNC/Mic-Monitor/raw/main/Mic_Monitor_v4.exe)**
+[![Download Mic_Monitor_v4.exe](https://img.shields.io/badge/Download-Mic__Monitor__v4.exe-7A9B76?style=for-the-badge)](https://github.com/WebHeadNC/Mic-Monitor/raw/main/Mic_Monitor_v4.exe)
 
-The repository also includes the original Python source (`mic-monitor.py`) in case you want to make changes, but you don't need it to run the app — everything is contained in the single self-contained exe (the icon is embedded, no other files required).
+The repository also includes the original Python source (`mic-monitor.py`) in case you want to make changes, but you don't need it to run the app — everything is contained in a single exe file.
 
-The app runs in the taskbar 
+## How it works
 
-![image](https://github.com/user-attachments/assets/1d9a4771-d7fd-4645-98f0-606ac324abc7) ![image](https://github.com/user-attachments/assets/c6f5a9da-b043-4bed-b279-51903dfe4026)
+Mic Monitor sits quietly in your system tray and watches your microphone. The tray icon itself tells you the current state at a glance:
 
-It has a menu that allows you to configure the webhook and choose how the mic is detected.
+<table>
+<tr>
+<td align="center" valign="top" width="50%">
+<img src="docs/state-standby.png" width="72" alt="Standby state icon"><br>
+<b>STANDBY</b><br>
+<sub>Microphone isn't in use. Icon stays green.</sub>
+</td>
+<td align="center" valign="top" width="50%">
+<img src="docs/state-onair.png" width="72" alt="On air state icon"><br>
+<b>ON AIR</b><br>
+<sub>Your mic's live. Icon turns red and your webhook fires.</sub>
+</td>
+</tr>
+</table>
+
+Right-click the tray icon any time to open the Webhook Editor, view the log, or exit.
+
+## Configuring it
+
+The Webhook Editor is where you set this up:
 
 ![Webhook Configuration window](docs/webhook-config-v4.png)
 
-You can view the log if needed for troubleshooting.
+The status panel at the top isn't just decoration — it reads the same live signal the detection loop uses, so if something isn't triggering correctly, you can watch it update in real time instead of guessing.
 
-![Mic Monitor Log window](docs/log-window-v4.png)
+**Webhook URLs.** Set a separate URL and HTTP method (GET or POST) for when your mic turns on and when it turns off. These are what actually control your smart outlet, light, or whatever you've wired up.
 
-Or you can exit the program.
-
-## Mic Detection Method
-
-The app can detect microphone use in two ways, selectable from the **Webhook Editor** menu:
+**Detection Method.** Choose how Mic Monitor decides your mic is active:
 
 - **Audio Session (recommended)** — reads the actual capture state from Windows Core Audio (WASAPI) via `pycaw`. This checks whether any application is really recording, so it isn't affected by taskbar rendering or UI lag.
 - **Taskbar Icon** — the original method, which looks for the microphone icon in the taskbar using UI Automation. Kept as a fallback.
 
-If `pycaw` isn't installed, the app automatically falls back to the Taskbar Icon method.
+Click **Save Changes** and everything here — both webhook URLs and your chosen detection method — persists across restarts, so you only need to set it up once.
+
+## Troubleshooting with the log
+
+Every event — mic transitions, webhook sends, errors — gets a timestamped line, color-coded by what it means: red when the mic goes live, green when it goes quiet, amber for real failures, and everything routine dimmed out of the way. The log window auto-refreshes, so you can leave it open during a call and watch it react live.
+
+![Mic Monitor Log window](docs/log-window-v4.png)
 
 ## Running the executable
 
@@ -40,8 +62,6 @@ Download **`Mic_Monitor_v4.exe`**. The icon is embedded, so it's fully self-cont
 
 1. **Put the exe in its own folder** (for example `C:\Tools\MicMonitor\`). The app writes its log and settings files next to itself, so giving it a dedicated folder keeps those alongside the exe and out of a cluttered directory like Downloads. Avoid protected locations such as `C:\Program Files`, where Windows may block those writes.
 2. **Double-click `Mic_Monitor_v4.exe`** to launch it. It runs in the taskbar tray — right-click the tray icon to open the Webhook Editor, view the log, or exit.
-
-On first run the app creates `mic_monitor.log` automatically. `mic_monitor_config.json` is created only after you save settings in the Webhook Editor; until then it runs on built-in defaults.
 
 ## Start automatically with Windows
 
@@ -56,12 +76,6 @@ The app will now start automatically the next time you sign in. To stop it from 
 
 > Note: leave the exe in its dedicated folder and point the shortcut at it there — don't move the exe into the Startup folder itself, or its log/config files will be written into that folder too.
 
-## Configuration
-
-Settings (both webhook URLs/methods and the chosen detection method) are saved to `mic_monitor_config.json`, created next to the executable when you save them in the Webhook Editor. Your changes persist across restarts.
-
-> Note: the config and log files are written to the app's own folder, so run the exe from a user-writable location (not `C:\Program Files`) to avoid Windows blocking the writes.
-
 ## Running from source
 
 Install the dependencies and run the script:
@@ -72,3 +86,7 @@ python mic-monitor.py
 ```
 
 Dependencies: `pywinauto`, `pystray`, `Pillow`, `requests`, and `pycaw` (for the Audio Session detection method).
+
+## License
+
+[GPLv3](LICENSE)
